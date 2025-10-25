@@ -5,56 +5,55 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Scan Barcode</title>
 
-  <!-- Include html5-qrcode library -->
   <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background: #111;
-      color: #fff;
-    }
-    h2 {
-      margin-top: 20px;
-    }
-    #reader {
-      width: 320px;
-      margin: 20px auto;
-      background: #000;
-      border-radius: 10px;
-      overflow: hidden;
-    }
-    #result {
-      margin-top: 20px;
-      font-size: 18px;
-      color: #0f0;
-    }
+    body { font-family: Arial, sans-serif; text-align: center; background: #111; color: #fff; }
+    #reader { width: 320px; margin: 20px auto; background: #000; border-radius: 10px; overflow: hidden; }
+    #details { margin-top: 20px; padding: 15px; background: #222; border-radius: 10px; width: 300px; margin-left: auto; margin-right: auto; display: none; }
+    button { background: #007bff; border: none; color: white; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
   </style>
 </head>
 <body>
   <h2>📷 Scan Product Barcode</h2>
   <div id="reader"></div>
-  <div id="result">Waiting for scan...</div>
+  <div id="details">
+    <h3>Product Details</h3>
+    <p><strong>ID:</strong> <span id="pId"></span></p>
+    <p><strong>Name:</strong> <span id="pName"></span></p>
+    <p><strong>Price:</strong> ₹<span id="pPrice"></span></p>
+  </div>
+  <br>
+  <a href="index.html"><button>⬅️ Back to Products</button></a>
 
   <script>
-    function onScanSuccess(decodedText, decodedResult) {
-      document.getElementById('result').innerText = `✅ Barcode: ${decodedText}`;
+    const products = JSON.parse(localStorage.getItem('products')) || [];
+
+    function showProduct(id) {
+      const product = products.find(p => p.id === id);
+      const details = document.getElementById('details');
+      if (product) {
+        document.getElementById('pId').innerText = product.id;
+        document.getElementById('pName').innerText = product.name;
+        document.getElementById('pPrice').innerText = product.price;
+        details.style.display = 'block';
+      } else {
+        details.style.display = 'block';
+        details.innerHTML = `<p style="color:red;">❌ Product not found for ID: ${id}</p>`;
+      }
     }
 
-    function onScanError(errorMessage) {
-      console.warn('Scan error:', errorMessage);
+    function onScanSuccess(decodedText, decodedResult) {
+      showProduct(decodedText);
     }
 
     const html5QrCode = new Html5Qrcode("reader");
     html5QrCode.start(
       { facingMode: "environment" },
       { fps: 10, qrbox: 250 },
-      onScanSuccess,
-      onScanError
+      onScanSuccess
     ).catch(err => {
-      document.getElementById('result').innerText = '❌ Camera access denied or unavailable.';
-      console.error('Camera init failed:', err);
+      console.error('Camera error:', err);
     });
   </script>
 </body>
