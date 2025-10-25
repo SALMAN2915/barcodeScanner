@@ -1,53 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Product Barcodes</title>
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
   <style>
-    body { font-family: Arial; margin: 30px; text-align: center; background: #f4f6f8; }
-    h2 { margin-bottom: 20px; }
-    table { width: 90%; margin: 0 auto; border-collapse: collapse; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-    th, td { border: 1px solid #ddd; padding: 10px; }
-    th { background-color: #222; color: white; }
-    a { display:inline-block; margin:15px; padding:10px 20px; background:#007bff; color:#fff; border-radius:6px; text-decoration:none; }
-    a:hover { background:#0056b3; }
+    body { font-family: Arial, sans-serif; text-align: center; background: #111; color: #fff; }
+    table { margin: 20px auto; border-collapse: collapse; width: 90%; background: #222; border-radius: 10px; overflow: hidden; }
+    th, td { padding: 10px; border: 1px solid #444; }
+    svg { background: #fff; }
+    button { background: #28a745; border: none; color: white; padding: 10px 20px; border-radius: 6px; cursor: pointer; margin-top: 10px; }
+    button:hover { background: #218838; }
   </style>
 </head>
 <body>
-  <h2>🛒 Product Barcode List</h2>
-  <a href="scan.html">Go to Scanner Page ➡️</a>
+  <h2>🛒 Product Barcodes</h2>
+
   <table>
     <thead>
-      <tr><th>Product Name</th><th>Product Code</th><th>Barcode</th></tr>
+      <tr><th>ID</th><th>Name</th><th>Price</th><th>Barcode</th></tr>
     </thead>
     <tbody id="productTable"></tbody>
   </table>
 
+  <a href="scan.html"><button>Go to Scanner Page 📷</button></a>
+
   <script>
+    // Sample 10 products
     const products = [
-      { name: "Laptop", code: "PROD1001" },
-      { name: "Smartphone", code: "PROD1002" },
-      { name: "Headphones", code: "PROD1003" },
-      { name: "Keyboard", code: "PROD1004" },
-      { name: "Mouse", code: "PROD1005" },
-      { name: "Charger", code: "PROD1006" },
-      { name: "Power Bank", code: "PROD1007" },
-      { name: "Smart Watch", code: "PROD1008" },
-      { name: "Tablet", code: "PROD1009" },
-      { name: "Camera", code: "PROD1010" }
+      { id: 'P001', name: 'Laptop', price: 55000 },
+      { id: 'P002', name: 'Mouse', price: 500 },
+      { id: 'P003', name: 'Keyboard', price: 1200 },
+      { id: 'P004', name: 'Headphones', price: 2500 },
+      { id: 'P005', name: 'Monitor', price: 9000 },
+      { id: 'P006', name: 'Smartphone', price: 22000 },
+      { id: 'P007', name: 'Tablet', price: 18000 },
+      { id: 'P008', name: 'Charger', price: 800 },
+      { id: 'P009', name: 'Power Bank', price: 1500 },
+      { id: 'P010', name: 'Webcam', price: 3000 }
     ];
 
-    const table = document.getElementById("productTable");
-    products.forEach((p, i) => {
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td>${p.name}</td>
-        <td>${p.code}</td>
-        <td><svg id="barcode${i}"></svg></td>
-      `;
+    // Save to localStorage (so scan.html can access)
+    localStorage.setItem('products', JSON.stringify(products));
+
+    const table = document.getElementById('productTable');
+    products.forEach(p => {
+      const row = document.createElement('tr');
+      row.innerHTML = `<td>${p.id}</td><td>${p.name}</td><td>₹${p.price}</td><td><svg id="${p.id}"></svg></td>`;
       table.appendChild(row);
-      JsBarcode(`#barcode${i}`, p.code, { format: "CODE128", width: 2, height: 60, displayValue: true });
+      JsBarcode(`#${p.id}`, p.id, { format: 'CODE128', width: 2, height: 40, displayValue: true });
     });
   </script>
 </body>
